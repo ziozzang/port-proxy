@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+	<title>Accordata Port-Proxy V0.95</title>
+</head>
+
+<body>
+<h2>Accordata Port-Proxy V0.95</h2>
+<p>
+Port-Proxy is Perl script to forward ports from the local system to another system.<br>
+When using https-tunneling you are able to go through an firewall.
+ </p>
+<p>
+	<b>Features:</b>
+	<ul>
+		<li>Port forwarding an the same system</li>
+		<li>Port forwarding to an remote system</li>
+		<li>Testet with Linux and Windows</li>
+		<li>Forward over https-tunnel to port 443</li>
+		<li>Forward over https-tunnel to any port</li>
+	</ul>
+</p>
+
+<p>	
+	<b>Install:</b>
+	<ul>
+		<li>Install Perl</li>
+		<li>Download the zip</li>
+		<li>Unzip to an any directory</li>
+		<li>Edit configuration file</li>
+		<li>Start programm</li>
+	</ul>
+	 <a href="port-proxy-0.95.tar.gz">Download Version 0.95</a>
+</p>
+<h3>Configuration</h3>
+<p>
+All the configuration is done in the file port-proxy.conf, which is readed from the current directory when starting port-proxy.pl.<br>
+There are the following parameters which can apear multiple times:
+</p>
+<p>
+<b>forward=local addr,destination addr,[proxy 1],[proxy 2]</b><br>
+<table border="0" cellspacing="4" cellpadding="0">
+<tr><td align="left" valign="top" width="100">local addr</td><td>
+	Define where port-proxy listen for connections.<br>
+	It can be either a port or an address with port (eg. 127.0.0.1:8080; localhost:8080)<br>
+	Without an address your system listens on all interfaces, also an dialup line.<br>
+</td></tr>
+<tr><td align="left" valign="top">destination addr</td><td>
+	Defines the destination as addr:port (eg. 192.168.0.1:80 or remotehost.com:80)<br>
+	Please note: If you use an proxy, this address is from the view of the proxy. If you use localhost or 127.0.0.1 it addresses the proxy host.<br>
+	If you enter the special address [PROXY], port-proxy.pl behave like an https proxy an reads the destination from the connecting client.
+</td></tr>
+<tr><td align="left" valign="top">proxy 1</td><td>
+	Defines an https proxy to use.  
+</td></tr>
+<tr><td align="left" valign="top">proxy 2</td><td>
+	Defines an 2nd https proxy to use. This is usally port-proxy.pl listening an port 443 
+</td></tr>
+</table>
+</p>
+
+<p>
+<b>allow_proxy_to=addr</b><br>
+Defines which destinations are allowed if you use [PROXY] as destination.<br>
+Addr is executed with perl regex and my be something like this:<br>
+allow_proxy_to=localhost:23	# allow telnet<br>
+allow_proxy_to=192.168..*:80	# http to all 192.168.x.x<br>
+</p>
+<p>
+<b>Example 1: Port forwarding</b><br>
+Task: Allow access to a service on a know host<br>
+[client] --- [proxy] --- [remote]<br>
+Your client has no access to [remote], but has access to [proxy]<br>
+To fetch mail from [remote], you may configure on [proxy]:<br>
+forward=110,remote.com:110<br>
+Your client connects to [proxy] an port 110 an fetches mail from remote.com.<br>
+</p>
+
+<p>
+<b>Example 2: Port forwarding with https tunnel</b><br>
+Task: Your client want to telnet to a know host, but is behind an firewall with only access to an https proxy. <br>
+Configuration on Client (<i>not working</i>): forward=localhost:9023,remote.com:23,https-proxy:8080<br>
+Since most proxys allow only connection to port 443 you don't has access to remote.com:23.<br>
+To get it work, you need to setup telnet on port 443 at remote.com:
+<ul>
+<li>Insert in inetd.conf of remote.com: 443 stream tcp nowait root /usr/sbin/tcpd in.telnetd</li>
+<li>Use configuration: forward=localhost:9023,remote.com:443,https-proxy:8080</li>
+<li>On your client use: telnet localhost 9023</li>
+</ul>
+Another disadvantage is that you only can configure one service on port 443.
+</p>
+
+<p>
+<b>Example 3: Port forwarding with https tunnel and an special proxy to access individual remote addesses</b><br>
+[client] --- [https-proxy] --- [remote host proxy:443] -- [remote service]<br>
+To cover the problems noted above, port-proxy.pl can behave like an proxy listening an port 443 and forward to your needed service.<br>
+You need to run port-proxy.pl on [client] and [remote]<br>
+</p>
+<p>
+port-proxy.conf on your client (telnet example):<br>
+forward=localhost:9023,localhost:23,https-proxy:8080,remote.com:443<br>
+(Note: 'localhost:23' is from the view of remote.com. Therefore it addresses telnet on remote.com)
+</p>
+<p>
+port-proxy.conf on remote.com:<br>
+forward=443,[PROXY]			# Listen on port 443 and behave like an https proxy<br>
+allow_proxy_to=localhost:23	# telnet<br>
+</p>
+<p>
+Connection flow:
+<ul>
+<li>On client: telnet localhost:9023</li>
+<li>port-proxy.pl connects to https-proxy:8080</li>
+<li>https-proxy connects to remote.com:443</li>
+<li>port-proxy.pl an remote.com connects localhost:23 (telnet)</li>
+</ul>
+</p>
+
+<h3>Running port-proxy.pl</h3>
+<p>
+<b>perl port-proxy.pl [-d] [-D] [-c conffile]</b>
+<table border="0" cellspacing="4" cellpadding="0">
+<tr><td align="left" valign="top">-d</td><td>
+Enable debug output
+</td></tr>
+<tr><td align="left" valign="top">-D</td><td>
+Become a background process (detach don't work on windows)
+</td></tr>
+<tr><td align="left" valign="top">-c conffile</td><td>
+Specify an config file
+</td></tr>
+</table>
+Example:<br>
+perl port-proxy -D -c /etc/port-proxy.conf
+</p>
+<p>
+</p>
+
+<h3>License</h3>
+This script is published 'as is', without warrenty or support.<br>
+<ul>
+<li>You are allowed to use and distribut without changes</li>
+<li>If you distribute modified version, you must not remove the copyright or author information.<br>
+You should document the changes and may add your copyright for that parts.</li>
+<li>If you use parts in your software, you should honor our work somewhere in your documentation.</li>
+</ul>
+
+<hr>
+(C) 2004 Ralf Amandi, Accordata GmbH 
+</body>
+</html>

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+pwd=`pwd`
+
+echo "#!/bin/sh" > start
+echo "#!/bin/sh" > stop
+echo "#!/bin/sh" > freez
+chmod +x start stop freez
+
+echo "pwd=\"$pwd\"" >> start
+echo "pwd=\"$pwd\"" >> stop
+echo "pwd=\"$pwd\"" >> freez
+
+cat start.templete >> start
+cat stop.templete >> stop
+cat freez.templete >> freez
+
+

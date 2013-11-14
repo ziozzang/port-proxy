@@ -1,0 +1,32 @@
+#---------------------------------------------------------------
+# Configuration file for Accordata Port-Proxy
+#---------------------------------------------------------------
+
+# Ports to listen
+# forward=ListenPort, Destination:Port [, Proxy:Port] [, Proxy2:Port]
+
+# Examples:
+#forward=10022,localhost:22		# Forward Port 10022 => Port 22 on this machine
+#forward=443,[PROXY]			# Listen on port 443 and behave like an https proxy
+#forward=110,192.168.0.0.1:110		# Forward local port 110 => Port 110 on an other machine
+#forward=80,www.microsoft.com:80	# Forward local port 80 => Port 80 on an other machine
+#forward=8023, remote.com:443, https-proxy.com:8080	# Foward Port 80 => Port 443 on remote.com via an https proxy
+#forward=localhost:9023, remote.com:23, https-proxy.com:8080, remote.com:443 # Telnet client -- https-proxy.com:8080 -- remote.com:443 -- remote.com:23
+
+#---------------------------------------------------------------
+# Allowed addresses we are proxying to
+# These addresses are checked if you use [PROXY] as Destination above
+# The given values are used as reg-expression
+#forward=1521,121.189.34.179:11521
+#forward=11521,121.189.34.179:11521
+
+forward=3839,mirror:80
+allow_proxy_to=mirror:80
+
+#allow_proxy_to=121.189.34.179:11521 #Oracle
+#allow_proxy_to=localhost:22	# ssh
+#allow_proxy_to=localhost:23	# telnet
+#allow_proxy_to=localhost:110	# pop3
+#allow_proxy_to=localhost:143	# imap
+#allow_proxy_to=192.168..*:80	# http to all 192.168.x.x
+
