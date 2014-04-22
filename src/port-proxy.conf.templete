@@ -20,9 +20,6 @@
 #forward=1521,121.189.34.179:11521
 #forward=11521,121.189.34.179:11521
 
-forward=3839,mirror:80
-allow_proxy_to=mirror:80
-
 #allow_proxy_to=121.189.34.179:11521 #Oracle
 #allow_proxy_to=localhost:22	# ssh
 #allow_proxy_to=localhost:23	# telnet
