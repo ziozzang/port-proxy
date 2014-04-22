@@ -21,12 +21,12 @@ if [[ -f "/etc/init.d/port-proxy" ]]; then
   service port-proxy stop
 fi
 
-wget -O "${PORT_PROXY_PATH}/port-proxy" "https://raw.githubusercontent.com/ziozzang/port-proxy/master/src/port-proxy"
-chmod +x port-proxy
+wget -O ${PORT_PROXY_PATH}/port-proxy "https://raw.githubusercontent.com/ziozzang/port-proxy/master/src/port-proxy"
+chmod +x ${PORT_PROXY_PATH}/port-proxy
 
 sed -i -e "s,\./port-proxy\.conf,${PORT_PROXY_CONF},g" ${PORT_PROXY_PATH}/port-proxy
 
-rm -f ${PORT_PROXY_CONF}
+wget -O ${PORT_PROXY_CONF} "https://raw.githubusercontent.com/ziozzang/port-proxy/master/src/port-proxy.conf.templete"
 while IFS='|' read -ra ADDR; do
   for i in "${ADDR[@]}"; do
     echo "$i"
@@ -56,9 +56,6 @@ author "Jioh L. Jung"
 
 start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [016]
-
-# configuration variables
-env PORT_PROXY_PATH=${PORT_PROXY_PATH}
 
 respawn
 
