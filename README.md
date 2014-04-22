@@ -7,6 +7,8 @@ port-proxy with service install
 original source from "Accordata Port-Proxy V0.95"
 http://www.accordata.net/downloads/port-proxy/
 
+connection pending/freeze patch & linux upstart script by Jioh L. Jung(ziozzang@gmail.com)
+
 
 Install
 =======
@@ -62,7 +64,7 @@ Task: Allow access to a service on a know host
 
 Your client has no access to [remote], but has access to [proxy], To fetch mail from [remote], you may configure on [proxy]:
 
-```forward=110,remote.com:110```
+```forward=110,remote.com:110 ```
 
 Your client connects to [proxy] an port 110 an fetches mail from remote.com.
 
@@ -72,7 +74,7 @@ Your client connects to [proxy] an port 110 an fetches mail from remote.com.
 Task: Your client want to telnet to a know host, but is behind an firewall with only access to an https proxy. 
 Configuration on Client (not working): 
 
-```forward=localhost:9023,remote.com:23,https-proxy:8080```
+```forward=localhost:9023,remote.com:23,https-proxy:8080 ```
 
 Since most proxys allow only connection to port 443 you don't has access to remote.com:23.
 To get it work, you need to setup telnet on port 443 at remote.com:
@@ -85,13 +87,13 @@ Another disadvantage is that you only can configure one service on port 443.
 
 **Example 3: Port forwarding with https tunnel and an special proxy to access individual remote addesses**
 
-```[client] --- [https-proxy] --- [remote host proxy:443] -- [remote service]```
+```[client] --- [https-proxy] --- [remote host proxy:443] -- [remote service] ```
 To cover the problems noted above, port-proxy can behave like an proxy listening an port 443 and forward to your needed service.
 
 You need to run port-proxy on [client] and [remote]
 port-proxy.conf on your client (telnet example):
 
-```forward=localhost:9023,localhost:23,https-proxy:8080,remote.com:443```
+```forward=localhost:9023,localhost:23,https-proxy:8080,remote.com:443 ```
 (Note: 'localhost:23' is from the view of remote.com. Therefore it addresses telnet on remote.com)
 
 port-proxy.conf on remote.com:
